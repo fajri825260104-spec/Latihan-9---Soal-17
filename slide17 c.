@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+// Fungsi bantu untuk mengubah string ke huruf kecil agar pencarian lebih fleksibel
+void to_lower_case(char *str) {
+    for(int i = 0; str[i]; i++){
+        str[i] = tolower(str[i]);
+    }
+}
+
+// a. Fungsi untuk menghitung biaya asuransi untuk tiap jenis ladang
+float hitung_asuransi(char *jenis_ladang, float nilai_tanggungan_per_hektar, float luas_hektar) {
+    // Biaya standar adalah 3.5 persen dari nilai tanggungan dikalikan luas tanah
+    float biaya_standar = 0.035 * nilai_tanggungan_per_hektar * luas_hektar;
+    
+    char jenis[50];
+    strcpy(jenis, jenis_ladang);
+    to_lower_case(jenis);
+
+    // Ladang kacang kedelai, kentang, bawang merah, dan cabai (2x biaya standar)
+    if (strcmp(jenis, "kacang kedelai") == 0 || strcmp(jenis, "kentang") == 0 || 
+        strcmp(jenis, "bawang merah") == 0 || strcmp(jenis, "cabai") == 0) {
+        return 2 * biaya_standar;
+    }
+    // Ladang padi, singkong, dan jagung (1.5x biaya standar)
+    else if (strcmp(jenis, "padi") == 0 || strcmp(jenis, "singkong") == 0 || strcmp(jenis, "jagung") == 0) {
+        return 1.5 * biaya_standar;
+    }
+    else {
+        return biaya_standar;
+    }
+}
+
+// b. Fungsi untuk mencetak slip pembayaran asuransi
+void cetak_slip(char *nama_petani, char jenis_ladang[][50], float biaya_asuransi_list[], int jumlah_ladang, float total_asuransi) {
+    printf("\n=============================================\n");
+    printf("          SLIP PEMBAYARAN ASURANSI PERTANIAN\n");
+    printf("=============================================\n");
+    printf("Nama Petani : %s\n", nama_petani);
+    printf("---------------------------------------------\n");
+    printf("Rincian Ladang & Biaya Asuransi:\n");
+    for (int i = 0; i < jumlah_ladang; i++) {
+        printf("  %d. Jenis: %s | Asuransi: Rp %.2f\n", i + 1, jenis_ladang[i], biaya_asuransi_list[i]);
+    }
+    printf("---------------------------------------------\n");
+    printf("Total Asuransi yang Harus Dibayar: Rp %.2f\n", total_asuransi);
+    printf("=============================================\n");
+}
+
+int main() {
+    char nama_petani[100];
+    int jumlah_ladang;
+    char jenis_ladang_list[3][50];
+    float biaya_asuransi_list[3];
+    float nilai_tanggungan, luas;
+    float total_asuransi = 0.0;
+
+    // c. Program utama untuk membaca input data petani dan ladang
+    printf("--- Program Utama Asuransi Pertanian ---\n");
+    printf("Masukkan nama petani: ");
+    fgets(nama_petani, sizeof(nama_petani), stdin);
+    nama_petani[strcspn(nama_petani, "\n")] = 0; // Menghapus karakter newline
+
+    while (1) {
+        printf("Masukkan jumlah jenis ladang yang dimiliki (maksimal 3): ");
+        if (scanf("%d", &jumlah_ladang) == 1 && jumlah_ladang >= 1 && jumlah_ladang <= 3) {
+            break;
+        }
+        printf("Jumlah ladang harus antara 1 sampai 3!\n");
+        while(getchar() != '\n'); // Membersihkan buffer
+    }
+
+    // Membersihkan buffer newline setelah scanf angka
+    while(getchar() != '\n');
+
+    for (int i = 0; i < jumlah_ladang; i++) {
+        printf("\nData Ladang ke-%d:\n", i + 1);
+        printf("  Jenis ladang (mis. Padi, Jagung, Cabai, dll): ");
+        fgets(jenis_ladang_list[i], sizeof(jenis_ladang_list
